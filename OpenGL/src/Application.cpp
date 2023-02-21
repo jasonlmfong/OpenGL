@@ -111,10 +111,14 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << "\n";
 
-    float positions[6] = {
+    float positions[] = {
         -0.5f, -0.5f, 
-         0.0f,  0.5f, 
-         0.5f, -0.5f
+         0.5f, -0.5f, 
+         0.5f,  0.5f,
+
+         0.5f,  0.5f,
+        -0.5f,  0.5f,
+        -0.5f, -0.5f
     };
 
     //// vao
@@ -127,14 +131,14 @@ int main(void)
     unsigned int buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 
-    std::cout << source.VertexSource << std::endl;
+    // std::cout << source.VertexSource << "\n";
 
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);
@@ -146,7 +150,7 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         /* Createa a triangle */
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 3*2);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
