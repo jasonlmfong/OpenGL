@@ -126,6 +126,8 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
+    glfwSwapInterval(10);
+
     /* GLEW init after the context and window exist */
     if (glewInit() != GLEW_OK)
         std::cout << "Error \n";
@@ -176,16 +178,24 @@ int main(void)
     ASSERT(location != -1);
     GLCall(glUniform4f(location, 0.26f, 0.52f, 0.96f, 1.0f));
 
-
+    float g = 0.0f;
+    float increment = 0.05f;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
+        GLCall(glUniform4f(location, 0.26f, g, 0.96f, 1.0f));
         /* Create a shape */
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
         
+        if (g > 1.0f)
+            increment = -0.5f;
+        else if (g < 0.0f)
+            increment = 0.5f;
+        
+        g += increment;
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
