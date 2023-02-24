@@ -61,6 +61,10 @@ int main(void)
             2, 3, 0
         };
 
+        // blending
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
         VertexArray va;
         VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
@@ -100,7 +104,7 @@ int main(void)
             renderer.Clear();
 
             shader.Bind();
-            // shader.SetUniform4f("u_Color", 0.26f, g, 0.96f, 1.0f);
+            shader.SetUniform4f("u_Color", 0.26f, g, 0.96f, 1.0f);
 
             /* bind va and ib, then create a shape */
             renderer.Draw(va, ib, shader);
