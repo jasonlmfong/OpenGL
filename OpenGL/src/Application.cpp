@@ -64,12 +64,8 @@ int main(void)
 
         VertexBufferLayout layout;
         layout.Push<float>(2);
-        va.AddBuffer(vb, layout);
-
-
         // links the vertex array wiht the vertex buffer
-        GLCall(glEnableVertexAttribArray(0));
-        GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+        va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, 6);
 
@@ -98,7 +94,7 @@ int main(void)
             shader.Bind();
             shader.SetUniform4f("u_Color", 0.26f, g, 0.96f, 1.0f);
 
-            /* Create a shape */
+            /* bind va and ib, then create a shape */
             renderer.Draw(va, ib, shader);
 
             if (g > 1.0f)

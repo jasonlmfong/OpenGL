@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <stdexcept>
 #include "Renderer.h"
 
 struct VertexBufferElement
@@ -33,25 +32,12 @@ public:
 		: m_Stride(0) {}
 
 	template<typename T>
-	void Push(int count)
+	void Push(unsigned int count)
 	{
-		std::runtime_error(false);
+		ASSERT(false);
 	}
 
-	void Push(unsigned int type, unsigned int count)
-	{
-		if (type == GL_UNSIGNED_BYTE)
-		{
-			m_Elements.push_back({ type, count, GL_TRUE });
-		}
-		else
-		{
-			m_Elements.push_back({ type, count, GL_FALSE });
-		}
-		m_Stride += count * VertexBufferElement::GetSizeOfType(type);
-	}
-
-	/*template<>
+	template<>
 	void Push<float>(unsigned int count)
 	{
 		m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });
@@ -70,7 +56,7 @@ public:
 	{
 		m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
 		m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
-	}*/
+	}
 
 	inline const std::vector<VertexBufferElement> GetElements() const { return m_Elements; }
 	inline unsigned int GetStride() const { return m_Stride; }
