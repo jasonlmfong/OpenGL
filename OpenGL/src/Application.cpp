@@ -13,6 +13,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Texture.h"
 
 int main(void)
 {
@@ -45,13 +46,14 @@ int main(void)
         std::cout << "Error \n";
 
     // show version
-    // std::cout << glGetString(GL_VERSION) << "\n";
+    std::cout << glGetString(GL_VERSION) << "\n";
+
     {
         float positions[] = {
-            -0.5f, -0.5f,
-             0.5f, -0.5f,
-             0.5f,  0.5f,
-            -0.5f,  0.5f
+            -0.5f, -0.5f, 0.0f, 0.0f, // 0
+             0.5f, -0.5f, 1.0f, 0.0f, // 1
+             0.5f,  0.5f, 1.0f, 1.0f, // 2
+            -0.5f,  0.5f, 0.0f, 1.0f  // 3
         };
 
         unsigned int indices[] = {
@@ -60,11 +62,12 @@ int main(void)
         };
 
         VertexArray va;
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
         VertexBufferLayout layout;
         layout.Push<float>(2);
-        // links the vertex array wiht the vertex buffer
+        layout.Push<float>(2);
+        // links the vertex array with the vertex buffer
         va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, 6);
@@ -74,6 +77,11 @@ int main(void)
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.26f, 0.52f, 0.96f, 1.0f);
+
+        // load texture
+        Texture texture("res/textures/Penguin.png");
+        texture.Bind();
+        shader.SetUniform1i("u_Texture", 0);
 
         // unbind
         va.Unbind();
@@ -92,7 +100,7 @@ int main(void)
             renderer.Clear();
 
             shader.Bind();
-            shader.SetUniform4f("u_Color", 0.26f, g, 0.96f, 1.0f);
+            // shader.SetUniform4f("u_Color", 0.26f, g, 0.96f, 1.0f);
 
             /* bind va and ib, then create a shape */
             renderer.Draw(va, ib, shader);
