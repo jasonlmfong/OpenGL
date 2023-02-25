@@ -15,6 +15,9 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 int main(void)
 {
     GLFWwindow* window;
@@ -76,11 +79,14 @@ int main(void)
 
         IndexBuffer ib(indices, 6);
 
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
         // std::cout << source.VertexSource << "\n";
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.26f, 0.52f, 0.96f, 1.0f);
+        shader.SetUniformMat4f("u_MVP", proj);
 
         // load texture
         Texture texture("res/textures/Penguin.png");
