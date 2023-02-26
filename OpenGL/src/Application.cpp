@@ -87,14 +87,11 @@ int main(void)
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(300, 200, 0));
         glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));;
 
-        glm::mat4 mvp = proj * view * model;
-
         // std::cout << source.VertexSource << "\n";
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.26f, 0.52f, 0.96f, 1.0f);
-        shader.SetUniformMat4f("u_MVP", mvp);
 
         // load texture
         Texture texture("res/textures/Penguin.png");
@@ -117,10 +114,8 @@ int main(void)
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
 
-        //imgui window
-        bool show_demo_window = true;
-        bool show_another_window = false;
-        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+        //translate view
+        glm::vec3 translation(300, 200, 0);
 
         //color changing
         float g = 0.0f;
@@ -136,8 +131,12 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            glm::mat4 view = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model;
+
             shader.Bind();
             shader.SetUniform4f("u_Color", 0.26f, g, 0.96f, 1.0f);
+            shader.SetUniformMat4f("u_MVP", mvp);
 
             /* bind va and ib, then create a shape */
             renderer.Draw(va, ib, shader);
@@ -151,20 +150,8 @@ int main(void)
 
             // render your GUI
             {
-                static float f = 0.0f;
-                static int counter = 0;
                 ImGui::Begin("Hello, World!");
-                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-                ImGui::ColorEdit3("clear color", (float*)&clear_color);
-
-                ImGui::Checkbox("Demo Window", &show_demo_window);
-                ImGui::Checkbox("Another Window", &show_another_window);
-
-                if (ImGui::Button("Button"))
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("Counter = %d", counter);
-
+                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 1080.0f);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                 ImGui::End();
             }
