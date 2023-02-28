@@ -22,6 +22,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include "tests/TestClearColor.h"
+
 int main(void)
 {
     GLFWwindow* window;
@@ -56,53 +58,9 @@ int main(void)
     std::cout << glGetString(GL_VERSION) << "\n";
 
     {
-        float positions[] = {
-            -50.0f, -50.0f, 0.0f, 0.0f, // 0
-             50.0f, -50.0f, 1.0f, 0.0f, // 1
-             50.0f,  50.0f, 1.0f, 1.0f, // 2
-            -50.0f,  50.0f, 0.0f, 1.0f  // 3
-        };
-
-        unsigned int indices[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
-
         // blending
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-        VertexArray va;
-        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
-
-        VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        // links the vertex array with the vertex buffer
-        va.AddBuffer(vb, layout);
-
-        IndexBuffer ib(indices, 6);
-
-        glm::mat4 proj = glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f);
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(300, 200, 0));
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));;
-
-        // std::cout << source.VertexSource << "\n";
-
-        Shader shader("res/shaders/Basic.shader");
-        shader.Bind();
-        shader.SetUniform4f("u_Color", 0.26f, 0.52f, 0.96f, 1.0f);
-
-        // load texture
-        Texture texture("res/textures/Penguin.png");
-        texture.Bind();
-        shader.SetUniform1i("u_Texture", 0);
-
-        // unbind
-        va.Unbind();
-        vb.Unbind();
-        ib.Unbind();
-        shader.Unbind();
 
         Renderer renderer;
 
@@ -114,16 +72,16 @@ int main(void)
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
 
-        //translate view
-        glm::vec3 translation1(300, 200, 0);
-        glm::vec3 translation2(600, 300, 0);
+        test::Test* currentTest = nullptr;
+        test::TestMenu* testMenu = new test::TestMenu(currentTest);
+        currentTest = testMenu;
 
-        //color changing
-        float g = 0.0f;
-        float increment = 0.05f;
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
             /* Render here */
             renderer.Clear();
 
@@ -132,39 +90,17 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            shader.Bind();
-            shader.SetUniform4f("u_Color", 0.26f, g, 0.96f, 1.0f);
-
+            if (currentTest)
             {
-                glm::mat4 view = glm::translate(glm::mat4(1.0f), translation1);
-                glm::mat4 mvp = proj * view * model;
-                shader.SetUniformMat4f("u_MVP", mvp);
-
-                /* bind va and ib, then create a shape */
-                renderer.Draw(va, ib, shader);
-            }
-
-            /* draw a second shape using a second MVP*/
-            {
-                glm::mat4 view = glm::translate(glm::mat4(1.0f), translation2);
-                glm::mat4 mvp = proj * view * model;
-                shader.SetUniformMat4f("u_MVP", mvp);
-                renderer.Draw(va, ib, shader);
-            }
-
-            if (g > 1.0f)
-                increment = -0.5f;
-            else if (g < 0.0f)
-                increment = 0.5f;
-
-            g += increment;
-
-            // render your GUI
-            {
-                ImGui::Begin("Hello, World!");
-                ImGui::SliderFloat3("Translation 1", &translation1.x, 0.0f, 1080.0f);
-                ImGui::SliderFloat3("Translation 2", &translation2.x, 0.0f, 1080.0f);
-                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("Test");
+                if (currentTest != testMenu && ImGui::Button("<-"))
+                {
+                    delete currentTest;
+                    currentTest = testMenu;
+                }
+                currentTest->OnImGuiRender();
                 ImGui::End();
             }
 
@@ -178,6 +114,9 @@ int main(void)
             /* Poll for and process events */
             GLCall(glfwPollEvents());
         }
+        delete currentTest;
+        if (currentTest != testMenu)
+            delete testMenu;
     }
 
     ImGui_ImplOpenGL3_Shutdown();
