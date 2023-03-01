@@ -9,28 +9,28 @@
 
 namespace test {
 
-	TestTexture2DBatch::TestTexture2DBatch()
-        : m_Proj(glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f)), 
+    TestTexture2DBatch::TestTexture2DBatch()
+        : m_Proj(glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f)),
         m_Model(glm::rotate(glm::mat4(1.0f), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f))),
         m_Translation(300, 200, 0), m_Green(0.0f), m_Increment(0.05f)
-	{
+    {
         float positions[] = {
             -50.0f, -50.0f, 0.0f, 0.0f, // 0
              50.0f, -50.0f, 1.0f, 0.0f, // 1
              50.0f,  50.0f, 1.0f, 1.0f, // 2
             -50.0f,  50.0f, 0.0f, 1.0f, // 3
 
-            150.0f, 150.0f, 0.0f, 0.0f, // 0
-            250.0f, 150.0f, 1.0f, 0.0f, // 1
-            250.0f, 250.0f, 1.0f, 1.0f, // 2
-            150.0f, 250.0f, 0.0f, 1.0f  // 3
+            150.0f, 150.0f, 0.0f, 0.0f, // 4
+            250.0f, 150.0f, 1.0f, 0.0f, // 5
+            250.0f, 250.0f, 1.0f, 1.0f, // 6
+            150.0f, 250.0f, 0.0f, 1.0f  // 7
         };
 
         unsigned int indices[] = {
-            0, 1, 2,
-            2, 3, 0,
-            4, 5, 6,
-            6, 7, 4
+            0, 1, 2, // triangle 1
+            2, 3, 0, // triangle 2
+            4, 5, 6, // triangle 3
+            6, 7, 4  // triangle 4
         };
 
         // blending
@@ -39,10 +39,8 @@ namespace test {
 
         m_VAO = std::make_unique<VertexArray>();
 
-        m_VB = std::make_unique<VertexBuffer>(positions, 2 * 4 * 4 * sizeof(float));
+        m_VB = std::make_unique<VertexBuffer>(positions, sizeof(positions));
         VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
         layout.Push<float>(2);
         layout.Push<float>(2);
 
@@ -57,20 +55,20 @@ namespace test {
         // load texture
         m_Texture = std::make_unique<Texture>("res/textures/Penguin.png");
         m_Shader->SetUniform1i("u_Texture", 0);
-	}
+    }
 
-	TestTexture2DBatch::~TestTexture2DBatch()
-	{
-	}
+    TestTexture2DBatch::~TestTexture2DBatch()
+    {
+    }
 
-	void TestTexture2DBatch::OnUpdate(float deltaTime)
-	{
-	}
+    void TestTexture2DBatch::OnUpdate(float deltaTime)
+    {
+    }
 
-	void TestTexture2DBatch::OnRender()
-	{
-		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-		GLCall(glClear(GL_COLOR_BUFFER_BIT));
+    void TestTexture2DBatch::OnRender()
+    {
+        GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+        GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         Renderer renderer;
 
@@ -93,12 +91,12 @@ namespace test {
             m_Increment = 0.5f;
 
         m_Green += m_Increment;
-	}
+    }
 
-	void TestTexture2DBatch::OnImGuiRender()
-	{
+    void TestTexture2DBatch::OnImGuiRender()
+    {
         ImGui::SliderFloat3("Translation", &m_Translation.x, 0.0f, 1080.0f);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	}
+    }
 
 }
