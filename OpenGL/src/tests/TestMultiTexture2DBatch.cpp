@@ -1,29 +1,29 @@
-#include "TestTexture2DBatch.h"
+#include "TestMultiTexture2DBatch.h"
 
 #include "Renderer.h"
 #include "imgui/imgui.h"
 
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "Shader.h"
 
 namespace test {
 
-    TestTexture2DBatch::TestTexture2DBatch()
+    TestMultiTexture2DBatch::TestMultiTexture2DBatch()
         : m_Proj(glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f)),
         m_Model(glm::rotate(glm::mat4(1.0f), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f))),
         m_Translation(300, 200, 0)
     {
         float positions[] = {
-            -50.0f, -50.0f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, // 0
-             50.0f, -50.0f, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, // 1
-             50.0f,  50.0f, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, // 2
-            -50.0f,  50.0f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, // 3
+            -50.0f, -50.0f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 0
+             50.0f, -50.0f, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 1
+             50.0f,  50.0f, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 2
+            -50.0f,  50.0f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 3
 
-            150.0f, 150.0f, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, // 4
-            250.0f, 150.0f, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, // 5
-            250.0f, 250.0f, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, // 6
-            150.0f, 250.0f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f  // 7
+            150.0f, 150.0f, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 4
+            250.0f, 150.0f, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 5
+            250.0f, 250.0f, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 6
+            150.0f, 250.0f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
         };
 
         unsigned int indices[] = {
@@ -44,36 +44,40 @@ namespace test {
         layout.Push<float>(2); // window coord
         layout.Push<float>(2); // texture coord
         layout.Push<float>(4); // color
+        layout.Push<float>(1); // texture ID
 
         // links the vertex array with the vertex buffer
         m_VAO->AddBuffer(*m_VB, layout);
         m_IB = std::make_unique<IndexBuffer>(indices, 12);
 
-        m_Shader = std::make_unique<Shader>("res/shaders/Batch.shader");
+        m_Shader = std::make_unique<Shader>("res/shaders/Multi.shader");
         m_Shader->Bind();
 
         // load texture
-        m_Texture = std::make_unique<Texture>("res/textures/Penguin.png");
-        m_Shader->SetUniform1i("u_Texture", 0);
+        m_Texture1 = std::make_unique<Texture>("res/textures/Penguin.png");
+        m_Texture2 = std::make_unique<Texture>("res/textures/icon.png");
+        int samplers[2] = { 0, 1 };
+        m_Shader->SetUniform1iv("u_Textures", 2, samplers);
     }
 
-    TestTexture2DBatch::~TestTexture2DBatch()
+    TestMultiTexture2DBatch::~TestMultiTexture2DBatch()
     {
     }
 
-    void TestTexture2DBatch::OnUpdate(float deltaTime)
+    void TestMultiTexture2DBatch::OnUpdate(float deltaTime)
     {
     }
 
-    void TestTexture2DBatch::OnRender()
+    void TestMultiTexture2DBatch::OnRender()
     {
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         Renderer renderer;
 
-        m_Texture->Bind();
         m_Shader->Bind();
+        m_Texture1->Bind(0);
+        m_Texture2->Bind(1);
 
         {
             glm::mat4 view = glm::translate(glm::mat4(1.0f), m_Translation);
@@ -85,7 +89,7 @@ namespace test {
         }
     }
 
-    void TestTexture2DBatch::OnImGuiRender()
+    void TestMultiTexture2DBatch::OnImGuiRender()
     {
         ImGui::SliderFloat3("Translation", &m_Translation.x, 0.0f, 1080.0f);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

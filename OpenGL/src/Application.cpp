@@ -25,6 +25,7 @@
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
 #include "tests/TestTexture2DBatch.h"
+#include "tests/TestMultiTexture2DBatch.h"
 
 int main(void)
 {
@@ -35,8 +36,8 @@ int main(void)
         return -1;
 
     // version 3.3 core
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
@@ -81,6 +82,7 @@ int main(void)
         testMenu->RegisterTest<test::TestClearColor>("Clear Color");
         testMenu->RegisterTest<test::TestTexture2D>("Texture");
         testMenu->RegisterTest<test::TestTexture2DBatch>("Batching");
+        testMenu->RegisterTest<test::TestMultiTexture2DBatch>("Batching with Multiple Textures");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
