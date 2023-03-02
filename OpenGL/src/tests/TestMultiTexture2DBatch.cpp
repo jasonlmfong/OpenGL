@@ -15,22 +15,29 @@ namespace test {
         m_Translation(300, 200, 0)
     {
         float positions[] = {
-            -50.0f, -50.0f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 0
-             50.0f, -50.0f, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 1
-             50.0f,  50.0f, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 2
-            -50.0f,  50.0f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, // 3
+            -50.0f, -50.0f, 0.0f, 0.0f, 0.18f, 0.60f, 0.96f, 1.0f, 0.0f, // 0
+             50.0f, -50.0f, 0.5f, 0.0f, 0.18f, 0.60f, 0.96f, 1.0f, 0.0f, // 1
+             50.0f,  50.0f, 0.5f, 1.0f, 0.18f, 0.60f, 0.96f, 1.0f, 0.0f, // 2
+            -50.0f,  50.0f, 0.0f, 1.0f, 0.18f, 0.60f, 0.96f, 1.0f, 0.0f, // 3
 
-            150.0f, 150.0f, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 4
-            250.0f, 150.0f, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 5
-            250.0f, 250.0f, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, // 6
-            150.0f, 250.0f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  // 7
+            -50.0f, 250.0f, 0.0f, 0.0f, 0.91f, 0.26f, 0.21f, 1.0f, 0.0f, // 4
+             50.0f, 250.0f, 0.5f, 0.0f, 0.91f, 0.26f, 0.21f, 1.0f, 0.0f, // 5
+             50.0f, 350.0f, 0.5f, 1.0f, 0.91f, 0.26f, 0.21f, 1.0f, 0.0f, // 6
+            -50.0f, 350.0f, 0.0f, 1.0f, 0.91f, 0.26f, 0.21f, 1.0f, 0.0f, // 7
+
+            150.0f, 150.0f, 0.0f, 0.0f, 1.00f, 0.93f, 0.24f, 1.0f, 1.0f, // 8
+            250.0f, 150.0f, 1.0f, 0.0f, 1.00f, 0.93f, 0.24f, 1.0f, 1.0f, // 9
+            250.0f, 250.0f, 1.0f, 1.0f, 1.00f, 0.93f, 0.24f, 1.0f, 1.0f, // 10
+            150.0f, 250.0f, 0.0f, 1.0f, 1.00f, 0.93f, 0.24f, 1.0f, 1.0f  // 11
         };
 
         unsigned int indices[] = {
-            0, 1, 2, // triangle 1
-            2, 3, 0, // triangle 2
-            4, 5, 6, // triangle 3
-            6, 7, 4  // triangle 4
+            0, 1, 2,   // triangle 1
+            2, 3, 0,   // triangle 2
+            4, 5, 6,   // triangle 3
+            6, 7, 4,   // triangle 4
+            8, 9, 10,  // triangle 5
+            10, 11, 8  // triangle 6
         };
 
         // blending
@@ -48,7 +55,7 @@ namespace test {
 
         // links the vertex array with the vertex buffer
         m_VAO->AddBuffer(*m_VB, layout);
-        m_IB = std::make_unique<IndexBuffer>(indices, 12);
+        m_IB = std::make_unique<IndexBuffer>(indices, 6 * 3);
 
         m_Shader = std::make_unique<Shader>("res/shaders/Multi.shader");
         m_Shader->Bind();
