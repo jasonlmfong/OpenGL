@@ -30,10 +30,6 @@ namespace test {
 
 		//translations
 		glm::vec3 m_Translation;
-
-		//color changing
-		float m_Green;
-		float m_Increment;
 	};
 
 }
