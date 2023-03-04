@@ -26,6 +26,7 @@
 #include "tests/TestTexture2D.h"
 #include "tests/TestTexture2DBatch.h"
 #include "tests/TestMultiTexture2DBatch.h"
+#include "tests/TestBatchDynamicGeometry.h"
 
 int main(void)
 {
@@ -83,6 +84,7 @@ int main(void)
         testMenu->RegisterTest<test::TestTexture2D>("Texture");
         testMenu->RegisterTest<test::TestTexture2DBatch>("Batching");
         testMenu->RegisterTest<test::TestMultiTexture2DBatch>("Batching with Multiple Textures");
+        testMenu->RegisterTest<test::TestBatchDynamicGeometry>("Batching with Dynamic Geometry");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
