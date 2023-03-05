@@ -143,7 +143,7 @@ void BatchRenderer::DrawQuad(const glm::vec2& position, const glm::vec2& size, c
         BeginBatch();
     }
 
-    // defautl no texture for pure color rendering
+    // default no texture for pure color rendering
     float textureIndex = 0.0f;
 
     s_Data.QuadBufferPtr->Position = { position.x, position.y };

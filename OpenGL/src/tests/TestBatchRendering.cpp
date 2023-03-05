@@ -48,10 +48,12 @@ namespace test {
         m_Shader = std::make_unique<Shader>("res/shaders/BatchRender.shader");
         m_Shader->Bind();
 
-        int samplers[32];
+        int samplers[32]{};
         for (int i = 0; i < 32; i++)
             samplers[i] = i;
         m_Shader->SetUniform1iv("u_Textures", 32, samplers);
+
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 
         BatchRenderer::Init();
 
@@ -74,6 +76,8 @@ namespace test {
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
+        m_Shader->Bind();
+
         glm::mat4 view = glm::translate(glm::mat4(1.0f), m_Translation);
         glm::mat4 mvp = m_Proj * view * m_Model;
         m_Shader->SetUniformMat4f("u_MVP", mvp);
@@ -81,25 +85,25 @@ namespace test {
         BatchRenderer::ResetStats();
         BatchRenderer::BeginBatch();
 
-        //// draw background
-        //for (float y = 0.0f; y < 1080.0f; y += 10.0f)
-        //{
-        //    for (float x = 0.0f; x < 1080.0f; x += 10.0f)
-        //    {
-        //        glm::vec4 color = { (x / 108.0f), 0.2f, (y / 108.0f), 1.0f };
-        //        BatchRenderer::DrawQuad({ x, y }, { 9.0f, 9.0f }, color);
-        //    }
-        //}
+        // draw background
+        for (float y = 0.0f; y < 1080.0f; y += 10.0f)
+        {
+            for (float x = 0.0f; x < 1080.0f; x += 10.0f)
+            {
+                glm::vec4 color = { (x / 108.0f), 0.2f, (y / 108.0f), 1.0f };
+                BatchRenderer::DrawQuad({ x, y }, { 9.0f, 9.0f }, color);
+            }
+        }
 
-        //// draw grid with alternating textures
-        //for (int y = 0; y < 500; y += 101)
-        //{
-        //    for (int x = 0; x < 500; x += 101)
-        //    {
-        //        unsigned int tex = (x + y) % 2 == 0 ? m_Texture1 : m_Texture2;
-        //        BatchRenderer::DrawQuad({ x, y }, { 100.0f, 100.0f }, tex);
-        //    }
-        //}
+        // draw grid with alternating textures
+        for (int y = 0; y < 500; y += 101)
+        {
+            for (int x = 0; x < 500; x += 101)
+            {
+                unsigned int tex = (x + y) % 2 == 0 ? m_Texture1 : m_Texture2;
+                BatchRenderer::DrawQuad({ x, y }, { 100.0f, 100.0f }, tex);
+            }
+        }
 
         // penguin
         BatchRenderer::DrawQuad(m_QuadPosition, { 200.0f, 200.0f }, m_Texture1);
@@ -111,7 +115,7 @@ namespace test {
     void TestBatchRendering::OnImGuiRender()
     {
         ImGui::SliderFloat3("Translation", &m_Translation.x, 0.0f, 1080.0f);
-        ImGui::DragFloat2("Quad Position", glm::value_ptr(m_QuadPosition), 1.0f);
+        ImGui::DragFloat2("Quad Position", &m_QuadPosition[0], 1.0f);
         ImGui::Text("Quads: %d", BatchRenderer::GetStats().QuadCount);
         ImGui::Text("Draws: %d", BatchRenderer::GetStats().DrawCount);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
