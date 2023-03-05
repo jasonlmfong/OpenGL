@@ -26,7 +26,7 @@ namespace test {
 		//translations
 		glm::vec3 m_Translation;
 
-		float m_QuadPosition[2] = {50.0f, 50.0f};
+		glm::vec2 m_QuadPosition = { 100.0f, 100.0f };
 	};
 
 }
