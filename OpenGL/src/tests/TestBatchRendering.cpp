@@ -10,7 +10,34 @@
 
 #include <array>
 
+#include "stb_image/stb_image.h"
+
 namespace test {
+
+    static unsigned int LoadTexture(const std::string& path)
+    {
+        int Width, Height, BPP;
+
+        stbi_set_flip_vertically_on_load(1);
+        unsigned char* pixels = stbi_load(path.c_str(), &Width, &Height, &BPP, 4);
+
+        unsigned int textureID;
+
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+        if (pixels)
+            stbi_image_free(pixels);
+
+        return textureID;
+    }
 
     TestBatchRendering::TestBatchRendering()
         : m_Proj(glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f)),
@@ -28,8 +55,8 @@ namespace test {
         BatchRenderer::Init();
 
         // load texture
-        m_Texture1 = Texture("res/textures/Penguin.png");
-        m_Texture2 = Texture("res/textures/icon.png");
+        m_Texture1 = LoadTexture("res/textures/Penguin.png");
+        m_Texture2 = LoadTexture("res/textures/icon.png");
     }
 
     TestBatchRendering::~TestBatchRendering()

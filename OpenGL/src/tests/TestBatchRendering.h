@@ -18,7 +18,7 @@ namespace test {
 
 	private:
 		std::unique_ptr<Shader> m_Shader;
-		Texture m_Texture1, m_Texture2;
+		unsigned int m_Texture1, m_Texture2;
 
 		// MVP
 		glm::mat4 m_Proj, m_Model;
