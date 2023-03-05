@@ -49,7 +49,7 @@ namespace test {
         m_VAO->AddBuffer(*m_VB, layout);
         m_IB = std::make_unique<IndexBuffer>(indices, 12);
 
-        m_Shader = std::make_unique<Shader>("res/shaders/Batch.shader");
+        m_Shader = std::make_unique<Shader>("res/shaders/TextureBatch.shader");
         m_Shader->Bind();
 
         // load texture
