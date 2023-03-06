@@ -28,6 +28,7 @@
 #include "tests/TestMultiTexture2DBatch.h"
 #include "tests/TestBatchDynamicGeometry.h"
 #include "tests/TestBatchRendering.h"
+#include "tests/TestCircle.h"
 
 int main(void)
 {
@@ -87,6 +88,7 @@ int main(void)
         testMenu->RegisterTest<test::TestMultiTexture2DBatch>("Batching with Multiple Textures");
         testMenu->RegisterTest<test::TestBatchDynamicGeometry>("Batching with Dynamic Geometry");
         testMenu->RegisterTest<test::TestBatchRendering>("Batch Rendering!");
+        testMenu->RegisterTest<test::TestCircle>("Circle");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
